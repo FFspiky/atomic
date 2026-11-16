@@ -14,7 +14,13 @@ for label, cwd in [("original upstream", base), ("patched source", root)]:
     print(result.stdout)
     results.append(result)
 original, patched = results
-if original.returncode != patched.returncode or original.stdout != patched.stdout:
+# Go 1.25 adds this package label when the package now contains tests.
+# Preserve every diagnostic line; normalize only that exact metadata line.
+def diagnostics(output):
+    return [line for line in output.splitlines()
+            if line != "# [github.com/natefinch/atomic]"]
+
+if original.returncode != patched.returncode or diagnostics(original.stdout) != diagnostics(patched.stdout):
     raise SystemExit("vet diagnostics differ from the original source")
 if patched.returncode:
     print("Raw vet still fails; confirmed identical baseline diagnostics.")

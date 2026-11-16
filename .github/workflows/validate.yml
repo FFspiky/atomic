@@ -23,5 +23,5 @@ jobs:
           cache: false
       - run: go version
       - run: go test -race -cover -v -count=1 ./...
-      - run: python .github/compare-vet.py
       - run: go build ./...
+      - run: python .github/compare-vet.py
